@@ -1,4 +1,4 @@
-name: Build Android APK
+name: HTML to APK
 
 on:
   push:
@@ -8,37 +8,17 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
+      - name: Compile HTML to APK
+        uses: fmaclen/html-to-android@v1.1.0
         with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-
-      - name: Install Cordova
-        run: npm install -g cordova
-
-      - name: Create Cordova Project
-        run: |
-          cordova create myApp com.example.app MyApp
-          cd myApp
-          cordova platform add android
-          rm -rf www/*
-          cp ../*.html www/index.html
-          cordova build android --release
+          file: "*.html"
+          output_dir: "output"
 
       - name: Upload APK
         uses: actions/upload-artifact@v3
         with:
-          name: app-release
-          path: myApp/platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk
+          name: my-app-apk
+          path: output/*.apk
+          
